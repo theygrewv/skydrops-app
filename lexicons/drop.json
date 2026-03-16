@@ -1,0 +1,32 @@
+{
+  "lex": 1,
+  "id": "app.skydrops.drop",
+  "defs": {
+    "main": {
+      "type": "record",
+      "description": "A creative work shared by an Artist.",
+      "key": "tid",
+      "record": {
+        "type": "object",
+        "required": ["content", "createdAt"],
+        "properties": {
+          "text": { 
+            "type": "string", 
+            "description": "Caption, lyrics, or notes about the piece." 
+          },
+          "media": {
+            "type": "array",
+            "items": { "type": "blob" },
+            "description": "The art (Audio, Image, or Video files)."
+          },
+          "medium": { 
+            "type": "string", 
+            "description": "The specific category (e.g., 'Watercolor', 'Vocal', 'Digital Design')." 
+          },
+          "altText": { "type": "string", "description": "Accessibility description for the art." },
+          "createdAt": { "type": "string", "format": "date-time" }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "lex": 1,
+  "id": "app.skydrops.love",
+  "defs": {
+    "main": {
+      "type": "record",
+      "description": "A expression of appreciation for an Artist's Drop.",
+      "key": "tid",
+      "record": {
+        "type": "object",
+        "required": ["subject", "createdAt"],
+        "properties": {
+          "subject": { 
+            "type": "ref", 
+            "description": "The Drop being loved." 
+          },
+          "vibe": { 
+            "type": "string", 
+            "description": "Optional tag (e.g., 'Inspiring', 'Mood', 'Masterpiece')." 
+          },
+          "createdAt": { "type": "string", "format": "date-time" }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "lex": 1,
+  "id": "app.skydrops.groove",
+  "defs": {
+    "main": {
+      "type": "record",
+      "description": "A reaction, critique, or feedback on a Drop.",
+      "key": "tid",
+      "record": {
+        "type": "object",
+        "required": ["text", "subject", "createdAt"],
+        "properties": {
+          "text": { 
+            "type": "string", 
+            "maxLength": 1000,
+            "description": "The body of the Groove or Deep Groove."
+          },
+          "subject": { 
+            "type": "ref", 
+            "description": "The Drop or Groove being responded to." 
+          },
+          "parent": { 
+            "type": "ref", 
+            "description": "The immediate Groove above (required for Deep Grooves)." 
+          },
+          "metadata": {
+            "type": "object",
+            "properties": {
+              "grooveType": { 
+                "type": "string", 
+                "description": "e.g., 'critique', 'praise', 'collab-request'." 
+              },
+              "attachments": { 
+                "type": "array", 
+                "items": { "type": "blob" },
+                "description": "Visual or audio feedback blobs (sketches, vocal takes, etc.)."
+              }
+            }
+          },
+          "createdAt": { "type": "string", "format": "date-time" }
+        }
+      }
+    }
+  }
+}

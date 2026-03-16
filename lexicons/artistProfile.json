@@ -1,0 +1,23 @@
+{
+  "lex": 1,
+  "id": "app.skydrops.artistProfile",
+  "defs": {
+    "main": {
+      "type": "record",
+      "description": "The professional identity of a Skydrops Artist.",
+      "key": "tid",
+      "record": {
+        "type": "object",
+        "required": ["displayName", "createdAt"],
+        "properties": {
+          "displayName": { "type": "string" },
+          "mediums": { "type": "array", "items": { "type": "string" } },
+          "portfolio": { "type": "array", "items": { "type": "ref" } },
+          "isCommissionable": { "type": "boolean", "default": false },
+          "bio": { "type": "string", "maxLength": 500 },
+          "createdAt": { "type": "string", "format": "date-time" }
+        }
+      }
+    }
+  }
+}
