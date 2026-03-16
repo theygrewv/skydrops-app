@@ -1,9 +1,6 @@
 const std = @import("std");
 
-pub const UserStatus = enum { unverified, verified };
-
 pub const VouchManager = struct {
-    // Maps DID to their current trust score
     trust_scores: std.StringHashMap(u32),
     allocator: std.mem.Allocator,
 
@@ -18,16 +15,26 @@ pub const VouchManager = struct {
         self.trust_scores.deinit();
     }
 
+    // Positive Trust
     pub fn addVouch(self: *VouchManager, target_did: []const u8, is_domain_owner: bool) !void {
         const weight: u32 = if (is_domain_owner) 3 else 1;
-        
         const current_score = self.trust_scores.get(target_did) orelse 0;
         try self.trust_scores.put(target_did, current_score + weight);
     }
 
+    // Negative Trust (Reporting)
+    pub fn flagAccount(self: *VouchManager, target_did: []const u8, is_domain_owner: bool) !void {
+        const penalty: u32 = if (is_domain_owner) 5 else 2;
+        const current_score = self.trust_scores.get(target_did) orelse 0;
+        
+        // Prevent underflow (score cannot be negative)
+        const new_score = if (current_score > penalty) current_score - penalty else 0;
+        try self.trust_scores.put(target_did, new_score);
+    }
+
     pub fn isVerified(self: VouchManager, target_did: []const u8) bool {
         const score = self.trust_scores.get(target_did) orelse 0;
-        return score >= 5; // The "Golden Threshold"
+        return score >= 5; 
     }
 };
 
@@ -39,18 +46,20 @@ pub fn main() !void {
     var manager = VouchManager.init(allocator);
     defer manager.deinit();
 
-    const new_artist_did = "did:plc:new-artist-123";
+    const target = "did:plc:shady-account-456";
 
-    // Scenario: One domain owner and two verified humans vouch for the artist
-    try manager.addVouch(new_artist_did, true);  // +3 points
-    try manager.addVouch(new_artist_did, false); // +1 point
-    try manager.addVouch(new_artist_did, false); // +1 point
+    std.debug.print("\n--- Skydrops Reputation & Flagging System ---\n", .{});
 
-    std.debug.print("\n--- Skydrops Refined Vouch System ---\n", .{});
+    // 1. Shady account gets some vouches from other bots/low-trust humans
+    try manager.addVouch(target, false); // +1
+    try manager.addVouch(target, false); // +1
+    try manager.addVouch(target, true);  // +3 (Total: 5 - VERIFIED)
     
-    if (manager.isVerified(new_artist_did)) {
-        std.debug.print("Result: ✅ {s} is now HUMAN VERIFIED (Score: 5)\n", .{new_artist_did});
-    } else {
-        std.debug.print("Result: ⏳ {s} still pending more vouches.\n", .{new_artist_did});
-    }
+    std.debug.print("Initial Status: {s}\n", .{if (manager.isVerified(target)) "✅ VERIFIED" else "❌ PENDING"});
+
+    // 2. A Domain Owner notices it's a bot and FLAGS it
+    std.debug.print("⚠️  Domain Owner flagged the account!\n", .{});
+    try manager.flagAccount(target, true); // -5
+
+    std.debug.print("Final Status:   {s} (Score dropped back to 0)\n", .{if (manager.isVerified(target)) "✅ VERIFIED" else "❌ BLOCKED"});
 }
