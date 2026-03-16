@@ -1,8 +1,0 @@
-{
-  "client_id": "https://skydrops.app/client-metadata.json",
-  "client_name": "Skydrops",
-  "scope": "atproto", 
-  "grant_types": ["authorization_code", "refresh_token"],
-  "response_types": ["code"],
-  "redirect_uris": ["skydrops://oauth/callback"]
-}
